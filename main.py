@@ -84,7 +84,24 @@ if uploaded_file is not None:
         ax_roc.legend()
         st.pyplot(fig_roc)
 
+   
+        st.subheader("🧪 Predict Air Quality from Custom Input")
+
+        input_features = {}
+        for col in X.columns:
+            min_val = float(df[col].min())
+            max_val = float(df[col].max())
+            mean_val = float(df[col].mean())
+            input_features[col] = st.slider(f"{col}", min_val, max_val, mean_val)
+
+        if st.button("🔍 Predict Air Quality"):
+            user_input_df = pd.DataFrame([input_features])
+            user_input_scaled = scaler.transform(user_input_df)
+            prediction = model.predict(user_input_scaled)
+            predicted_label = label_encoder.inverse_transform(prediction)[0]
+            st.success(f"🌬️ Predicted Air Quality: **{predicted_label}**")
+
     except Exception as e:
-        st.error(f"Something went wrong: {e}")
+        st.error(f"❌ Something went wrong: {e}")
 else:
     st.info("👈 Upload a CSV file to begin.")
